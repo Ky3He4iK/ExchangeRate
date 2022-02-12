@@ -10,4 +10,9 @@ data class ExchangeRateResponse(
     val time_next_update_utc: String,
     val base_code: String,
     val conversion_rates: HashMap<String, Float>,
-)
+) {
+    constructor() : this(
+        "", "", "", 0,
+        "", 0, "", "", hashMapOf()
+    )
+}

@@ -37,9 +37,9 @@ class CurrencyRepositoryImpl(application: Application) : CurrencyRepository {
             if (rate == null || rate.nextUpdate >= Date()) {
                 Repository.exchangeRates.getRates(pair.first).observe(owner) {
                     it.forEach { exchangeRate ->
-                        exchangeRateDAO.addRate(exchangeRate)
+                        exchangeRateDAO.addRate(ExchangeRateDTO(exchangeRate))
                         if (exchangeRate.currencies == pair)
-                            rate = exchangeRate
+                            rate = ExchangeRateDTO(exchangeRate)
                     }
                 }
             }
@@ -49,7 +49,7 @@ class CurrencyRepositoryImpl(application: Application) : CurrencyRepository {
         return data as LiveData<T?>
     }
 
-    override fun <T : ExchangeRate> getAllRates(user: T): LiveData<List<T>> {
+    override fun <T : ExchangeRate> getAllRates(): LiveData<List<T>> {
         val data = MutableLiveData<List<ExchangeRateDTO>>()
         ExchangeDatabase.databaseWriteExecutor.execute {
             data.postValue(exchangeRateDAO.getAllRates())

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import dev.ky3he4ik.exchange.presentation.repository.converters.DataTypeConverter
 import dev.ky3he4ik.exchange.presentation.repository.model.ExchangeRateDTO
 import dev.ky3he4ik.exchange.presentation.repository.room.dao.ExchangeRateDAO
 import java.util.concurrent.ExecutorService
@@ -15,6 +17,7 @@ import java.util.concurrent.Executors
     version = 1,
     exportSchema = false
 )
+@TypeConverters(DataTypeConverter::class)
 abstract class ExchangeDatabase : RoomDatabase() {
     abstract fun exchangeRateDAO(): ExchangeRateDAO
 
