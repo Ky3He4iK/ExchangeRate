@@ -1,0 +1,39 @@
+package dev.ky3he4ik.exchange
+
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import dev.ky3he4ik.exchange.databinding.ActivityMainBinding
+import dev.ky3he4ik.exchange.presentation.repository.Repository
+
+class MainActivity : AppCompatActivity() {
+    lateinit var navHost: NavHostFragment
+    lateinit var binding: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        Repository.initRepository(application)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        navHost =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+        navHost.navController.let {
+            NavigationUI.setupWithNavController(
+                findViewById<BottomNavigationView>(R.id.bottomNav),
+                it
+            )
+//            intent.data?.let {
+//                navHost.navController.navigate(it)
+//            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navHost.navController.handleDeepLink(intent)
+    }
+}
