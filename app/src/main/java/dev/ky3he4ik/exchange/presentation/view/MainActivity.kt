@@ -8,15 +8,11 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import dev.ky3he4ik.exchange.databinding.ActivityMainBinding
 import dev.ky3he4ik.exchange.presentation.repository.Repository
 import dev.ky3he4ik.exchange.presentation.viewmodel.ExchangeViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Main
-import okhttp3.Dispatcher
-import java.lang.Exception
 import kotlin.math.roundToLong
 
 class MainActivity : AppCompatActivity() {
@@ -36,38 +32,47 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {}
 
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {
             }
 
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
                 updateRate(s.toString())
             }
         })
 
-//        binding.sendEdit.doOnTextChanged { text, start, before, count ->
-//            val v = text.toString().toFloatOrNull() ?: return@doOnTextChanged
-//            currentRate ?: return@doOnTextChanged
-//            binding.getEdit.setText(((v * currentRate * 100).roundToLong() / 100f).toString())
-//        }
         binding.getEdit.isEnabled = false
 
-        binding.chooseFirst.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.chooseFirst.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 binding.chooseFirst.setSelection(0)
             }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 getRate()
             }
         }
-        binding.chooseSecond.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        binding.chooseSecond.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 binding.chooseSecond.setSelection(0)
             }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 getRate()
             }
         }
@@ -97,23 +102,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRate() {
-        try {
-            val selectedF = binding.chooseFirst.selectedItem as String
-            val selectedS = binding.chooseSecond.selectedItem as String
-            lifecycleScope.launch(handler) {
-                currentRate = ExchangeViewModel.getExchangeRate(selectedF, selectedS)?.rate
-                if (currentRate == null)
-                    Toast.makeText(this@MainActivity, "No internet connection", Toast.LENGTH_SHORT)
-                        .show()
-                withContext(Dispatchers.Main) {
-                    updateRate(binding.sendEdit.text.toString())
-                }
+        val selectedF = binding.chooseFirst.selectedItem as String
+        val selectedS = binding.chooseSecond.selectedItem as String
+        lifecycleScope.launch(handler) {
+            currentRate = ExchangeViewModel.getExchangeRate(selectedF, selectedS)?.rate
+            if (currentRate == null)
+                Toast.makeText(this@MainActivity, "No internet connection", Toast.LENGTH_SHORT)
+                    .show()
+            withContext(Dispatchers.Main) {
+                updateRate(binding.sendEdit.text.toString())
             }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
-            Log.e("Exchange/Main", e.message, e)
         }
     }
+
     private fun updateRate(text: String) {
         val v = text.toFloatOrNull() ?: return
 
