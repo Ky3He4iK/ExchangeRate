@@ -1,8 +1,6 @@
 package dev.ky3he4ik.exchange.presentation.repository.room
 
 import android.app.Application
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dev.ky3he4ik.exchange.domain.model.ExchangeRate
 import dev.ky3he4ik.exchange.presentation.repository.CurrencyRepository
@@ -27,33 +25,27 @@ class CurrencyRepositoryImpl(application: Application) : CurrencyRepository {
         }
     }
 
-    override fun <T : ExchangeRate> getRate(
-        pair: Pair<String, String>,
-        owner: LifecycleOwner
-    ): LiveData<T?> {
+    override fun getRate(
+        pair: Pair<String, String>
+    ): ExchangeRate? {
         val data = MutableLiveData<ExchangeRate>()
+        var currentRate: ExchangeRate? = null
         ExchangeDatabase.databaseWriteExecutor.execute {
             var rate = exchangeRateDAO.getRate(pair)
             if (rate == null || rate.nextUpdate >= Date()) {
-                Repository.exchangeRates.getRates(pair.first).observe(owner) {
-                    it.forEach { exchangeRate ->
-                        exchangeRateDAO.addRate(ExchangeRateDTO(exchangeRate))
-                        if (exchangeRate.currencies == pair)
-                            rate = ExchangeRateDTO(exchangeRate)
-                    }
+                Repository.exchangeRates.getRates(pair.first)?.forEach { exchangeRate ->
+                    exchangeRateDAO.addRate(ExchangeRateDTO(exchangeRate))
+                    if (exchangeRate.currencies == pair)
+                        rate = ExchangeRateDTO(exchangeRate)
                 }
             }
-            if (rate != null)
-                data.postValue(rate)
+            currentRate = rate
         }
-        return data as LiveData<T?>
+        return currentRate
     }
 
-    override fun <T : ExchangeRate> getAllRates(): LiveData<List<T>> {
-        val data = MutableLiveData<List<ExchangeRateDTO>>()
-        ExchangeDatabase.databaseWriteExecutor.execute {
-            data.postValue(exchangeRateDAO.getAllRates())
-        }
-        return data as LiveData<List<T>>
+
+    override fun getAllRates(): List<ExchangeRate> {
+        return exchangeRateDAO.getAllRates()
     }
 }

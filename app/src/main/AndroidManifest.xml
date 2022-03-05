@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ExchangeRate">
         <activity
-            android:name="dev.ky3he4ik.exchange.MainActivity"
+            android:name="dev.ky3he4ik.exchange.presentation.view.MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:exported="true">
             <intent-filter>
