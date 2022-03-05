@@ -10,7 +10,7 @@ interface ExchangeRateApi {
     fun getRate(
         @Path("token") token: String,
         @Path("currency") currency: String
-    ): Call<ExchangeRateResponse?>?
+    ): Call<ExchangeRateResponse?>
 
 //    @GET("v6/{token}/codes")
 //    suspend fun supportedCodes(@Path("token") token: String): NetworkResponse<ExchangeRateAvailable?>

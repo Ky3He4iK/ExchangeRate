@@ -4,7 +4,7 @@ import dev.ky3he4ik.exchange.domain.model.ExchangeRate
 import dev.ky3he4ik.exchange.presentation.repository.Repository
 
 object ExchangeViewModel {
-    fun getExchangeRate(
+    suspend fun getExchangeRate(
         currencyFrom: String,
         currencyTo: String
     ): ExchangeRate? =

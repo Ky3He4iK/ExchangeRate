@@ -6,7 +6,7 @@ import dev.ky3he4ik.exchange.domain.model.ExchangeRate
 import java.sql.Timestamp
 
 @Entity(tableName = "exchange_rate")
-class ExchangeRateDTO(
+data class ExchangeRateDTO(
     @PrimaryKey
     override val currencies: Pair<String, String>,
     override val rate: Float,
